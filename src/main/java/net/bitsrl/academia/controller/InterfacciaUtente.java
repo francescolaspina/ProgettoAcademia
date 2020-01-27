@@ -128,7 +128,7 @@ public class InterfacciaUtente implements AutoCloseable {
                 System.out.println();
                 break;
             case 5: //Delete
-                System.out.println("-DELETE-\nLista Corsi attuali");
+                System.out.println("-DELETE-");
                 Collection<Course> course3 = hrService.getAllCourses();
                 course3.forEach(System.out::println);
                 System.out.print("Inserisci l'id del corso da eliminare: ");

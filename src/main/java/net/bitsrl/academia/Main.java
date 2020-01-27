@@ -19,8 +19,8 @@ public class Main {
             EntityManagerFactory emf = EntityManagerFactorySingleton.getInstance().getFactory();
             EntityManager em = emf.createEntityManager();
             RepositoryAgent ra = new AgentRepositoryJpa(em);
-            RepositoryCourse rc = new CourseRepositoryJpa();
-            HRService service = new HrServiceJpa(ra, em);
+            RepositoryCourse rc = new CourseRepositoryJpa(em);
+            HRService service = new HrServiceJpa(ra, rc, em);
             InterfacciaUtente mydbc = new InterfacciaUtente(service);
             mydbc.start();
             mydbc.close();

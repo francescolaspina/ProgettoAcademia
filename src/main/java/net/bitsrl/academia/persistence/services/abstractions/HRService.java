@@ -13,11 +13,15 @@ public interface HRService {
     Collection<Agent> getAllAgents() throws DataException;
     Collection<Agent> getAgentsByLastNameLike(String pattern) throws DataException;
 
-    Course createCourse(Course toInsert);
-    boolean deleteCourse(int courseId);
-    boolean updateCourse(int courseId, Course toUpdate);
-    Collection<Course> getAllCourses();
-    Collection<Course> getCoursesByTitleLike(String pattern);
+
+
+    //-----------------------------------------------------------------------------------------------------------------
+    //CORSOOOOOOOO
+    Course createCourse(Course toInsert) throws DataException;
+    boolean updateCourse(int courseId, Course toUpdate) throws DataException;
+    boolean deleteCourse(int courseId) throws DataException;
+    Collection<Course> getAllCourses() throws DataException;
+    Collection<Course> getCoursesByTitleLike(String pattern) throws DataException;
 
 
 }

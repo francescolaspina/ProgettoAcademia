@@ -4,6 +4,7 @@ import net.bitsrl.academia.model.Agent;
 import net.bitsrl.academia.model.Course;
 import net.bitsrl.academia.persistence.repositories.DataException;
 import net.bitsrl.academia.persistence.repositories.abstractions.RepositoryAgent;
+import net.bitsrl.academia.persistence.repositories.abstractions.RepositoryCourse;
 import net.bitsrl.academia.persistence.services.abstractions.HRService;
 
 import javax.persistence.EntityManager;
@@ -12,11 +13,15 @@ import java.util.Collection;
 
 public class HrServiceJpa implements HRService {
     private RepositoryAgent agentRepo;
+    private RepositoryCourse courseRepo;
     private EntityManager em;
-    public HrServiceJpa(RepositoryAgent repo, EntityManager em) {
-        this.agentRepo = repo;
+    public HrServiceJpa(RepositoryAgent agentR, RepositoryCourse courseR,EntityManager em) {
+        this.agentRepo = agentR;
+        this.courseRepo = courseR;
         this.em = em;
     }
+
+
     @Override
     public Agent createAgent(Agent toInsert) throws DataException {
         em.getTransaction().begin();
@@ -38,6 +43,7 @@ public class HrServiceJpa implements HRService {
             em.getTransaction().commit();
             return true;
         } catch (PersistenceException pe) {
+            em.getTransaction().rollback();
             throw new DataException("errore nella cancellazione dell' agent con JPA", pe);
         }
     }
@@ -50,6 +56,7 @@ public class HrServiceJpa implements HRService {
             em.getTransaction().commit();
             return true;
         } catch (PersistenceException pe) {
+            em.getTransaction().rollback();
             throw new DataException("errore nella cancellazione dell' agent con JPA", pe);
         }
     }
@@ -72,28 +79,63 @@ public class HrServiceJpa implements HRService {
         }
     }
 
+
+    //-----------------------------------------------------------------------------------------------------------------
+    //CORSOOOOOOOO
     @Override
-    public Course createCourse(Course toInsert) {
-        return null;
+    public Course createCourse(Course toInsert) throws DataException{
+        em.getTransaction().begin();
+        try {
+            Course inserted = courseRepo.create(toInsert);
+            em.getTransaction().commit();
+            return inserted;
+        } catch (PersistenceException pe) {
+            em.getTransaction().rollback();
+            throw new DataException("errore nella creazione di un nuovo corso con JPA", pe);
+        }
     }
 
     @Override
-    public boolean deleteCourse(int courseId) {
-        return false;
+    public boolean deleteCourse(int courseId) throws DataException{
+        em.getTransaction().begin();
+        try {
+            courseRepo.delete(courseId);
+            em.getTransaction().commit();
+            return true;
+        } catch (PersistenceException pe) {
+            em.getTransaction().rollback();
+            throw new DataException("errore nella cancellazione del corso con JPA", pe);
+        }
     }
 
     @Override
-    public boolean updateCourse(int courseId, Course toUpdate) {
-        return false;
+    public boolean updateCourse(int courseId, Course toUpdate) throws DataException{
+        em.getTransaction().begin();
+        try {
+            courseRepo.update(courseId, toUpdate);
+            em.getTransaction().commit();
+            return true;
+        } catch (PersistenceException pe) {
+            em.getTransaction().rollback();
+            throw new DataException("errore nell'aggiornamento del corso con JPA",pe);
+        }
     }
 
     @Override
-    public Collection<Course> getAllCourses() {
-        return null;
+    public Collection<Course> getAllCourses() throws DataException{
+        try {
+            return courseRepo.getAll();
+        } catch (PersistenceException pe) {
+            throw new DataException("errore nella lista di corsi tramite JPA", pe);
+        }
     }
 
     @Override
-    public Collection<Course> getCoursesByTitleLike(String pattern) {
-        return null;
+    public Collection<Course> getCoursesByTitleLike(String pattern) throws DataException{
+        try {
+            return courseRepo.getByTitleLike(pattern);
+        } catch (PersistenceException pe) {
+            throw new DataException("errore nella lista corsi like title tramite JPA", pe);
+        }
     }
 }
